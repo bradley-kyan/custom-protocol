@@ -1,4 +1,4 @@
-from src.totp import *
+from src.totp import totp, totp_instance, totp_storage
 
 
 class totp_authenticator(totp_instance):
@@ -6,24 +6,20 @@ class totp_authenticator(totp_instance):
     Authenticator class that extends the TOTP functionality.
     It can generate a secret and TOTP codes, and also verify them.
     """
-
-    def __init__(self, identifier: str = None, secret: str = None):
+    
+    def __init__(self, identifier: str | None, secret: str | None):
         super().__init__(identifier=identifier, secret=secret)
 
     def verify_totp(self, totp_code: str, secret: str, identifier: str) -> bool:
-        """
-        Verify the provided TOTP code against the generated code using the secret.
-        """
+        """Verify the provided TOTP code against the generated code using the secret."""
         generated_code = self.generate_totp(secret=secret)
         return totp_code == generated_code
 
 
 class totp_auth_factory:
-    """
-    Factory for creating and managing TOTP instances.
-    """
+    """Factory for creating and managing TOTP instances."""
 
-    def __init__(self, totp_storeage_filename: str = None):
+    def __init__(self, totp_storeage_filename: str | None):
         self.storage = totp_storage(totp_storeage_filename)
 
     def create_totp_instance(self, identifier: str) -> totp_authenticator:
@@ -48,7 +44,6 @@ class totp_auth_factory:
         Update an existing TOTP instance with a new secret.
         If the instance does not exist, create a new one.
         """
-
         totp_authenticator = self.get_totp_authenticator(identifier)
 
         if totp_authenticator is None:
@@ -64,10 +59,7 @@ class totp_auth_factory:
         return totp_authenticator
 
     def get_totp_authenticator(self, identifier: str) -> totp_authenticator:
-        """
-        Retrieve an existing TOTP instance by identifier.
-        """
-
+        """Retrieve an existing TOTP instance by identifier."""
         secret = self.storage.restore_backup(identifier)
 
         if secret is None:

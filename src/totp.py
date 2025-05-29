@@ -1,22 +1,16 @@
+import hmac
 import random
 import time
-import hmac
 
 
 class totp:
     def generate_secret(self):
-        """
-        Generate a random secret key for TOTP.
-        The secret is a base32 encoded string.
-        """
-
+        """Generate a random secret key for TOTP. The secret is a base32 encoded string."""
         self.secret = "".join(random.choices("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", k=64))
         return self.secret
 
     def generate_totp(self, secret: str, byte_len: int = 32, digits: int = 64):
-        """
-        Implement HOTP (HMAC-based One-Time Password) algorithm to generate a TOTP code.
-        """
+        """Implement HOTP (HMAC-based One-Time Password) algorithm to generate a TOTP code."""
         time_step = 30  # TOTP time step in seconds
 
         counter = int(time.time()) / time_step
@@ -39,11 +33,9 @@ class totp:
 
 
 class totp_instance(totp):
-    """
-    TOTP instance for a specific identifier.
-    """
+    """TOTP instance for a specific identifier."""
 
-    def __init__(self, identifier: str, secret: str = None):
+    def __init__(self, identifier: str, secret: str | None):
         self.identifier = identifier
 
         if secret is None:
@@ -51,7 +43,7 @@ class totp_instance(totp):
         else:
             self.secret = secret
 
-        return super().__init__()
+        super().__init__()
 
     def generate_secret(self):
         self.secret = super().generate_secret()
@@ -63,19 +55,15 @@ class totp_instance(totp):
 
 
 class totp_storage:
-    """
-    Save and restore generated TOTP secrets and codes.
-    """
+    """Save and restore generated TOTP secrets and codes."""
 
-    def __init__(self, backup_file: str = None):
+    def __init__(self, backup_file: str | None):
         self.instances = {}
         self.backup_file = backup_file if backup_file else "totp_backup.txt"
         self.load_from_disk()
 
     def save_totp(self, totp_instance: totp_instance) -> bool:
-        """
-        Save the TOTP secret for a given identifier.
-        """
+        """Save the TOTP secret for a given identifier."""
         self.load_from_disk()
 
         if self.instances.get(totp_instance.identifier):
@@ -88,9 +76,7 @@ class totp_storage:
         return True
 
     def update_totp(self, totp_instance: totp_instance):
-        """
-        Update the TOTP secret for a given identifier.
-        """
+        """Update the TOTP secret for a given identifier."""
         if not self.instances.get(totp_instance.identifier):
             print(
                 f"No TOTP instance found for identifier: {totp_instance.identifier}... Creating new instance."
@@ -99,25 +85,19 @@ class totp_storage:
         self.instances[totp_instance.identifier] = totp_instance.secret
 
     def restore_backup(self, identifier: str) -> str:
-        """
-        Restore the TOTP secret for a given identifier.
-        """
+        """Restore the TOTP secret for a given identifier."""
         return self.instances.get(identifier, None)
 
     def save_to_disk(self):
-        """
-        Save the instances to a file.
-        """
+        """Save the instances to a file."""
         with open(self.backup_file, "w") as f:
             for identifier, secret in self.instances.items():
                 f.write(f"{identifier}:{secret}\n")
 
     def load_from_disk(self):
-        """
-        Load the instances from a file.
-        """
+        """Load the instances from a file."""
         try:
-            with open(self.backup_file, "r") as f:
+            with open(self.backup_file) as f:
                 for line in f:
                     identifier, secret = line.strip().split(":")
                     self.instances[identifier] = secret

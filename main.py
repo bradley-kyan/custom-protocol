@@ -1,7 +1,8 @@
+import time
+
 from src.authenticator import (
     totp_auth_factory as totp_factory,
 )
-import time
 
 totp_auth_factory = totp_factory(totp_storeage_filename="totp_backup.txt")
 
