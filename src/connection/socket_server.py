@@ -7,7 +7,7 @@ from src.connection.socket_buffer import socket_buffer
 from scapy.all import *
 
 
-class socket_server():
+class socket_server:
     """Create a connection to a given host and port for enabling two way communication."""
 
     def __init__(self, host: str, port: int):
@@ -17,8 +17,6 @@ class socket_server():
         self.sel = (
             selectors.PollSelector()
         )  # Using PollSelector for better performance with many connections
-        
-        
 
     def run_server(self):
         """Run the server to listen for incoming connections."""
@@ -48,14 +46,14 @@ class socket_server():
 
     def accept_connection(self, sock):
         conn, addr = sock.accept()  # Should be ready to read
-        
+
         print(f"Accepted connection from {addr}")
         conn.setblocking(False)
-        
+
         data = types.SimpleNamespace(
             addr=addr, socket_buffer=socket_buffer(), conn_time=int(time.time())
         )
-        
+
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
         print(f"Data: {data}")
         self.sel.register(conn, events, data=data)
@@ -94,16 +92,14 @@ class socket_server():
         # The client has finished sending its data so now we can process it
         if mask & selectors.EVENT_WRITE:
             if data.socket_buffer.in_buffer:
-                
                 # Need to add logic to process the in_buffer following the protocol specs
 
-                
                 # Write to the out buffer the message response
-                
+
                 sent = sock.send(
                     data.socket_buffer.out_buffer
                 )  # Should be ready to write
-                
+
                 # Clear our in_buffer and out_buffer after sending
                 data.socket_buffer.in_buffer = data.socket_buffer.in_buffer[sent:]
                 data.socket_buffer.out_buffer = data.socket_buffer.out_buffer[sent:]

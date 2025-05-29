@@ -10,7 +10,7 @@ class connection_handler(socket_server):
     def run_server(self):
         """Run the server to listen for incoming connections."""
         super().run_server()  # Call the parent method to set up the server
-        
+
     def verify_connection(self, conn):
         """Verify the connection and handle authentication."""
         # Placeholder for connection verification logic
