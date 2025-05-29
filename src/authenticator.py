@@ -7,7 +7,7 @@ class totp_authenticator(totp_instance):
     It can generate a secret and TOTP codes, and also verify them.
     """
     
-    def __init__(self, identifier: str | None, secret: str | None):
+    def __init__(self, identifier: str = None, secret: str = None):
         super().__init__(identifier=identifier, secret=secret)
 
     def verify_totp(self, totp_code: str, secret: str, identifier: str) -> bool:
@@ -19,7 +19,7 @@ class totp_authenticator(totp_instance):
 class totp_auth_factory:
     """Factory for creating and managing TOTP instances."""
 
-    def __init__(self, totp_storeage_filename: str | None):
+    def __init__(self, totp_storeage_filename: str = None):
         self.storage = totp_storage(totp_storeage_filename)
 
     def create_totp_instance(self, identifier: str) -> totp_authenticator:

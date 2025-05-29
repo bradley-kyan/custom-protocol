@@ -35,7 +35,7 @@ class totp:
 class totp_instance(totp):
     """TOTP instance for a specific identifier."""
 
-    def __init__(self, identifier: str, secret: str | None):
+    def __init__(self, identifier: str, secret: str = None):
         self.identifier = identifier
 
         if secret is None:
@@ -57,7 +57,7 @@ class totp_instance(totp):
 class totp_storage:
     """Save and restore generated TOTP secrets and codes."""
 
-    def __init__(self, backup_file: str | None):
+    def __init__(self, backup_file: str = None):
         self.instances = {}
         self.backup_file = backup_file if backup_file else "totp_backup.txt"
         self.load_from_disk()
