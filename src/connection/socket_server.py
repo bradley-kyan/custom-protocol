@@ -51,7 +51,7 @@ class socket_server:
         conn.setblocking(False)
 
         data = types.SimpleNamespace(
-            addr=addr, socket_buffer=socket_buffer(), conn_time=int(time.time())
+            addr=addr, socket_buffer=socket_buffer(), conn_time=int(time.time()), auth_step=0
         )
 
         events = selectors.EVENT_READ | selectors.EVENT_WRITE
