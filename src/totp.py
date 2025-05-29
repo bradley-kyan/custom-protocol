@@ -37,12 +37,18 @@ class totp:
         return str(totp_code)
     
 class totp_instance(totp):
+    """
+    TOTP instance for a specific identifier.
+    """
     def __init__(self, identifier: str, secret: str = None):
         self.identifier = identifier
-        self.secret = secret
         
-        if not self.secret:
-            self.secret = self.generate_secret()
+        if secret is None:
+            self.generate_secret()
+        else:
+            self.secret = secret
+        
+        return super().__init__()
         
     def generate_secret(self):
         self.secret = super().generate_secret()
@@ -60,11 +66,28 @@ class totp_storage:
     def __init__(self, backup_file: str = None):
         self.instances = {}
         self.backup_file = backup_file if backup_file else "totp_backup.txt"
+        self.load_from_disk()
     
-    def save_totp(self, totp_instance: totp_instance):
+    def save_totp(self, totp_instance: totp_instance) -> bool:
         """
         Save the TOTP secret for a given identifier.
         """
+        self.load_from_disk()
+        
+        if self.instances.get(totp_instance.identifier):
+            print(f"TOTP instance exists for identifier: {totp_instance.identifier}... Not updating.")
+            return False
+        
+        self.instances[totp_instance.identifier] = totp_instance.secret
+        return True
+    
+    def update_totp(self, totp_instance: totp_instance):
+        """
+        Update the TOTP secret for a given identifier.
+        """
+        if not self.instances.get(totp_instance.identifier):
+            print(f"No TOTP instance found for identifier: {totp_instance.identifier}... Creating new instance.")
+        
         self.instances[totp_instance.identifier] = totp_instance.secret
     
     def restore_backup(self, identifier: str) -> str:

@@ -1,19 +1,18 @@
-from src.totp import (
-    totp_instance as totpi,
-    totp_storage as totps   
+from src.authenticator import (
+    totp_auth_factory as totp_factory,
 )
 import time
 
-totp_instance = totpi("connection_1", "JFAYYXHEMEIMMATA2TCN4EFC5H3WJP2QF4RAQVOHLVFV2TL5WX7WUCRZABJCIPIB")
-totp_storage = totps(backup_file="totp_backup.txt")
+totp_auth_factory = totp_factory(totp_storeage_filename="totp_backup.txt")
 
-totp_storage.save_totp(totp_instance)
-totp_storage.save_to_disk()
+example_auth = totp_auth_factory.create_totp_instance(identifier="example_user")
 
 def run_totp_cycle():
     while True:
-        totp_code = totp_instance.generate_totp()
-        print(f"Current TOTP Code: {totp_code}")
+        print("Generating TOTP code...")
+        totp_code = example_auth.generate_totp()
+        print(f"TOTP Code: {totp_code}")
+        
         time.sleep(10)
         
 run_totp_cycle()
