@@ -6,7 +6,7 @@ class totp_authenticator(totp_instance):
     Authenticator class that extends the TOTP functionality.
     It can generate a secret and TOTP codes, and also verify them.
     """
-    
+
     def __init__(self, identifier: str = None, secret: str = None):
         super().__init__(identifier=identifier, secret=secret)
 

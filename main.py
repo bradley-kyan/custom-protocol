@@ -1,7 +1,7 @@
 import time
 import asyncio
 from scapy.all import *
-from src.connection import socket_server as conn
+from src.connection.connection_handler import connection_handler as conn
 
 from src.authenticator import (
     totp_auth_factory as totp_factory,
@@ -25,10 +25,11 @@ example_auth = totp_auth_factory.create_totp_instance(identifier="example_user")
 
 server = conn(host="127.0.0.1", port=45425)
 
+
 def run_server():
     server.run_server()
     print("Server is running and waiting for connections...")
-    
+
 
 run_server()
 
